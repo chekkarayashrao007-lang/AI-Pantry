@@ -1,0 +1,11 @@
+{
+  "name": "pantryiq",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "mobile": "pnpm --filter mobile start",
+    "api": "pnpm --filter api dev",
+    "db:generate": "pnpm --filter database prisma:generate",
+    "db:migrate": "pnpm --filter database prisma:migrate"
+  }
+}

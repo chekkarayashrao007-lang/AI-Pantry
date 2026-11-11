@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(uuid())
+  email         String          @unique
+  name          String?
+  createdAt     DateTime        @default(now())
+  preferences   UserPreference?
+  pantryItems   PantryItem[]
+  recipes       SavedRecipe[]
+  shoppingList  ShoppingItem[]
+}
+
+model UserPreference {
+  id                   String   @id @default(uuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dietaryRestrictions  String[]
+  allergies            String[]
+  maxCookTimeMinutes   Int      @default(45)
+  preferredCuisines    String[]
+}
+
+model PantryItem {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  category        String
+  quantity        Float     @default(1.0)
+  unit            String
+  purchasedAt     DateTime  @default(now())
+  expiresAt       DateTime?
+  isExpired       Boolean   @default(false)
+  confidenceScore Float?
+}
+
+model SavedRecipe {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title           String
+  description     String
+  prepTimeMinutes Int
+  cookTimeMinutes Int
+  servings        Int      @default(2)
+  difficulty      String
+  ingredients     Json
+  instructions    String[]
+  nutritionalData Json?
+  createdAt       DateTime @default(now())
+}
+
+model ShoppingItem {
+  id       String  @id @default(uuid())
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name     String
+  quantity Float   @default(1.0)
+  unit     String  @default("pcs")
+  category String  @default("Pantry")
+  isBought Boolean @default(false)
+}
